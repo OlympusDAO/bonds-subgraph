@@ -39,7 +39,7 @@ function generateRecord(contractId: u64, block: ethereum.Block): void {
   }
 
   const market = marketResult.value;
-  const scale = market.getScale().div(BigInt.fromString("10"));
+  const scale = market.getScale();
   const isLive = isLiveResult.value;
   const price = priceResult.value;
   const metadata = metadataResult.value;

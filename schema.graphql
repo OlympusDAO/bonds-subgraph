@@ -7,13 +7,13 @@ type BondSnapshot @entity(immutable: true) {
   block: BigInt!
   # Market data
   isLive: Boolean!
-  price: BigDecimal!
+  price: BigDecimal! # OHM
   owner: Bytes!
   payoutToken: Bytes!
   quoteToken: Bytes!
   capacity: BigDecimal! # OHM
   totalDebt: BigDecimal! # OHM
-  minPrice: BigDecimal!
+  minPrice: BigDecimal! # OHM
   maxPayout: BigDecimal!
   sold: BigDecimal!
   purchased: BigDecimal!
