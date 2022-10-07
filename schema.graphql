@@ -1,0 +1,36 @@
+type BondSnapshot @entity(immutable: true) {
+  id: ID! # <contract address>/<contract id>/<block>
+  contractAddress: Bytes!
+  contractId: BigInt!
+  date: String! # ISO 8601
+  timestamp: BigInt! # Unix epoch
+  block: BigInt!
+  # Market data
+  isLive: Boolean!
+  price: BigDecimal!
+  owner: Bytes!
+  payoutToken: Bytes!
+  quoteToken: Bytes!
+  capacity: BigDecimal! # OHM
+  totalDebt: BigDecimal! # OHM
+  minPrice: BigDecimal!
+  maxPayout: BigDecimal!
+  sold: BigDecimal!
+  purchased: BigDecimal!
+
+  tuneIntervalSeconds: BigInt!
+  lastTuneTimestamp: BigInt! # Unix epoch
+  lastTuneSecondsAgo: BigInt!
+  nextTuneInSeconds: BigInt!
+
+  debtDecayIntervalSeconds: BigInt!
+  lastDecayTimestamp: BigInt! # Unit epoch
+  lastDecaySecondsAgo: BigInt!
+  nextDecayInSeconds: BigInt!
+
+  depositIntervalSeconds: BigInt!
+  tuneAdjustmentDelaySeconds: BigInt!
+  tuneIntervalCapacity: BigDecimal!
+  tuneBelowCapacity: BigDecimal!
+  lastTuneDebt: BigDecimal!
+}
