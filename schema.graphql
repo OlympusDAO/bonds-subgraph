@@ -20,13 +20,17 @@ type BondSnapshot @entity(immutable: true) {
 
   tuneIntervalSeconds: BigInt!
   lastTuneTimestamp: BigInt! # Unix epoch
+  lastTuneDate: String!
   lastTuneSecondsAgo: BigInt!
   nextTuneInSeconds: BigInt!
+  nextTuneDate: String!
 
   debtDecayIntervalSeconds: BigInt!
   lastDecayTimestamp: BigInt! # Unit epoch
+  lastDecayDate: String!
   lastDecaySecondsAgo: BigInt!
   nextDecayInSeconds: BigInt!
+  nextDecayDate: String!
 
   depositIntervalSeconds: BigInt!
   tuneAdjustmentDelaySeconds: BigInt!

@@ -39,7 +39,7 @@ function generateRecord(contractId: u64, block: ethereum.Block): void {
   }
 
   const market = marketResult.value;
-  const scale = market.getScale(); // 10*35
+  const scale = market.getScale().div(BigInt.fromString("10"));
   const isLive = isLiveResult.value;
   const price = priceResult.value;
   const metadata = metadataResult.value;
@@ -60,17 +60,25 @@ function generateRecord(contractId: u64, block: ethereum.Block): void {
   // Market metadata
   record.tuneIntervalSeconds = metadata.getTuneInterval();
   record.lastTuneTimestamp = metadata.getLastTune();
+  record.lastTuneDate = getISO8601StringFromTimestamp(record.lastTuneTimestamp);
   record.lastTuneSecondsAgo = record.timestamp.minus(record.lastTuneTimestamp);
   record.nextTuneInSeconds = record.lastTuneTimestamp
     .plus(record.tuneIntervalSeconds)
     .minus(record.timestamp);
+  record.nextTuneDate = getISO8601StringFromTimestamp(
+    record.lastTuneTimestamp.plus(record.tuneIntervalSeconds),
+  );
 
   record.debtDecayIntervalSeconds = metadata.getDebtDecayInterval();
   record.lastDecayTimestamp = metadata.getLastDecay();
+  record.lastDecayDate = getISO8601StringFromTimestamp(record.lastDecayTimestamp);
   record.lastDecaySecondsAgo = record.timestamp.minus(record.lastDecayTimestamp);
   record.nextDecayInSeconds = record.lastDecayTimestamp
     .plus(record.debtDecayIntervalSeconds)
     .minus(record.timestamp);
+  record.nextDecayDate = getISO8601StringFromTimestamp(
+    record.lastDecayTimestamp.plus(record.debtDecayIntervalSeconds),
+  );
 
   record.depositIntervalSeconds = metadata.getDepositInterval();
   record.tuneAdjustmentDelaySeconds = metadata.getTuneAdjustmentDelay();

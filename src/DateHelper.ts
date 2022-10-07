@@ -10,7 +10,14 @@ export const getISO8601String = (date: Date): string => {
   return date.toISOString().split("T")[0];
 };
 
+export const getDateFromUnixTimestamp = (timestamp: BigInt): Date => {
+  return new Date(timestamp.toI64() * 1000);
+};
+
+export const getISO8601DateStringFromTimestamp = (timestamp: BigInt): string => {
+  return getISO8601String(getDateFromUnixTimestamp(timestamp));
+};
+
 export const getISO8601StringFromTimestamp = (timestamp: BigInt): string => {
-  const date = new Date(timestamp.toI64() * 1000);
-  return getISO8601String(date);
+  return getDateFromUnixTimestamp(timestamp).toISOString();
 };

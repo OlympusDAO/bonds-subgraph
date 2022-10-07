@@ -203,6 +203,15 @@ export class BondSnapshot extends Entity {
     this.set("lastTuneTimestamp", Value.fromBigInt(value));
   }
 
+  get lastTuneDate(): string {
+    const value = this.get("lastTuneDate");
+    return value!.toString();
+  }
+
+  set lastTuneDate(value: string) {
+    this.set("lastTuneDate", Value.fromString(value));
+  }
+
   get lastTuneSecondsAgo(): BigInt {
     const value = this.get("lastTuneSecondsAgo");
     return value!.toBigInt();
@@ -219,6 +228,15 @@ export class BondSnapshot extends Entity {
 
   set nextTuneInSeconds(value: BigInt) {
     this.set("nextTuneInSeconds", Value.fromBigInt(value));
+  }
+
+  get nextTuneDate(): string {
+    const value = this.get("nextTuneDate");
+    return value!.toString();
+  }
+
+  set nextTuneDate(value: string) {
+    this.set("nextTuneDate", Value.fromString(value));
   }
 
   get debtDecayIntervalSeconds(): BigInt {
@@ -239,6 +257,15 @@ export class BondSnapshot extends Entity {
     this.set("lastDecayTimestamp", Value.fromBigInt(value));
   }
 
+  get lastDecayDate(): string {
+    const value = this.get("lastDecayDate");
+    return value!.toString();
+  }
+
+  set lastDecayDate(value: string) {
+    this.set("lastDecayDate", Value.fromString(value));
+  }
+
   get lastDecaySecondsAgo(): BigInt {
     const value = this.get("lastDecaySecondsAgo");
     return value!.toBigInt();
@@ -255,6 +282,15 @@ export class BondSnapshot extends Entity {
 
   set nextDecayInSeconds(value: BigInt) {
     this.set("nextDecayInSeconds", Value.fromBigInt(value));
+  }
+
+  get nextDecayDate(): string {
+    const value = this.get("nextDecayDate");
+    return value!.toString();
+  }
+
+  set nextDecayDate(value: string) {
+    this.set("nextDecayDate", Value.fromString(value));
   }
 
   get depositIntervalSeconds(): BigInt {
