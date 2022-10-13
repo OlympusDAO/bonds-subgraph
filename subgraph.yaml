@@ -22,4 +22,7 @@ dataSources:
           file: ./abis/BondAggregator.json
       blockHandlers:
         - handler: handleBlock
+      eventHandlers:
+        - event: Tuned(indexed uint256,uint256,uint256)
+          handler: handleTunedEvent
       file: ./src/handler.ts

@@ -185,6 +185,24 @@ export class BondSnapshot extends Entity {
     this.set("purchased", Value.fromBigDecimal(value));
   }
 
+  get controlVariable(): BigInt {
+    const value = this.get("controlVariable");
+    return value!.toBigInt();
+  }
+
+  set controlVariable(value: BigInt) {
+    this.set("controlVariable", Value.fromBigInt(value));
+  }
+
+  get previousControlVariable(): BigInt {
+    const value = this.get("previousControlVariable");
+    return value!.toBigInt();
+  }
+
+  set previousControlVariable(value: BigInt) {
+    this.set("previousControlVariable", Value.fromBigInt(value));
+  }
+
   get tuneIntervalSeconds(): BigInt {
     const value = this.get("tuneIntervalSeconds");
     return value!.toBigInt();
@@ -336,5 +354,91 @@ export class BondSnapshot extends Entity {
 
   set lastTuneDebt(value: BigDecimal) {
     this.set("lastTuneDebt", Value.fromBigDecimal(value));
+  }
+}
+
+export class TunedEvent extends Entity {
+  constructor(id: string) {
+    super();
+    this.set("id", Value.fromString(id));
+  }
+
+  save(): void {
+    const id = this.get("id");
+    assert(id != null, "Cannot save TunedEvent entity without an ID");
+    if (id) {
+      assert(
+        id.kind == ValueKind.STRING,
+        `Entities of type TunedEvent must have an ID of type String but the id '${id.displayData()}' is of type ${id.displayKind()}`
+      );
+      store.set("TunedEvent", id.toString(), this);
+    }
+  }
+
+  static load(id: string): TunedEvent | null {
+    return changetype<TunedEvent | null>(store.get("TunedEvent", id));
+  }
+
+  get id(): string {
+    const value = this.get("id");
+    return value!.toString();
+  }
+
+  set id(value: string) {
+    this.set("id", Value.fromString(value));
+  }
+
+  get contractAddress(): Bytes {
+    const value = this.get("contractAddress");
+    return value!.toBytes();
+  }
+
+  set contractAddress(value: Bytes) {
+    this.set("contractAddress", Value.fromBytes(value));
+  }
+
+  get contractId(): BigInt {
+    const value = this.get("contractId");
+    return value!.toBigInt();
+  }
+
+  set contractId(value: BigInt) {
+    this.set("contractId", Value.fromBigInt(value));
+  }
+
+  get timestamp(): BigInt {
+    const value = this.get("timestamp");
+    return value!.toBigInt();
+  }
+
+  set timestamp(value: BigInt) {
+    this.set("timestamp", Value.fromBigInt(value));
+  }
+
+  get block(): BigInt {
+    const value = this.get("block");
+    return value!.toBigInt();
+  }
+
+  set block(value: BigInt) {
+    this.set("block", Value.fromBigInt(value));
+  }
+
+  get previousControlVariable(): BigInt {
+    const value = this.get("previousControlVariable");
+    return value!.toBigInt();
+  }
+
+  set previousControlVariable(value: BigInt) {
+    this.set("previousControlVariable", Value.fromBigInt(value));
+  }
+
+  get newControlVariable(): BigInt {
+    const value = this.get("newControlVariable");
+    return value!.toBigInt();
+  }
+
+  set newControlVariable(value: BigInt) {
+    this.set("newControlVariable", Value.fromBigInt(value));
   }
 }

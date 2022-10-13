@@ -1,8 +1,8 @@
-import { Address, BigInt, ethereum } from "@graphprotocol/graph-ts";
+import { Address, BigInt, ethereum, log } from "@graphprotocol/graph-ts";
 
 import { BondAggregator } from "../generated/BondFixedExpirySDA/BondAggregator";
-import { BondFixedExpirySDA } from "../generated/BondFixedExpirySDA/BondFixedExpirySDA";
-import { BondSnapshot } from "../generated/schema";
+import { BondFixedExpirySDA, Tuned } from "../generated/BondFixedExpirySDA/BondFixedExpirySDA";
+import { BondSnapshot, TunedEvent } from "../generated/schema";
 import { getISO8601StringFromTimestamp } from "./DateHelper";
 import { toDecimal } from "./NumberHelper";
 
@@ -13,7 +13,8 @@ const DECIMAL_PLACES = 9; // OHM
 const OHM_V2 = "0x64aa3364F17a4D01c6f1751Fd97C2BD3D7e7f1D5";
 
 function generateRecord(contractAddress: string, contractId: u64, block: ethereum.Block): void {
-  const recordId = `${contractAddress}/${contractId}/${block.number.toString()}`;
+  const contractAddressLower = contractAddress.toLowerCase();
+  const recordId = `${contractAddressLower}/${contractId}/${block.number.toString()}`;
   const record = new BondSnapshot(recordId);
   const bondContractAddress = Address.fromString(contractAddress);
   const contractIdBigInt = BigInt.fromU64(contractId);
@@ -31,14 +32,12 @@ function generateRecord(contractAddress: string, contractId: u64, block: ethereu
   const isLiveResult = bondContract.try_isLive(contractIdBigInt);
   const priceResult = bondContract.try_marketPrice(contractIdBigInt);
   const metadataResult = bondContract.try_metadata(contractIdBigInt);
-  // const controlVariableResult = bondContract.try_currentControlVariable(contractIdBigInt);
   // Market doesn't exist at this block
   if (
     marketResult.reverted ||
     isLiveResult.reverted ||
     priceResult.reverted ||
-    metadataResult.reverted // ||
-    // controlVariableResult.reverted
+    metadataResult.reverted
   ) {
     return;
   }
@@ -48,7 +47,6 @@ function generateRecord(contractAddress: string, contractId: u64, block: ethereu
   const isLive = isLiveResult.value;
   const price = priceResult.value;
   const metadata = metadataResult.value;
-  // const controlVariable = controlVariableResult.value;
 
   // Market data
   record.isLive = isLive;
@@ -62,7 +60,18 @@ function generateRecord(contractAddress: string, contractId: u64, block: ethereu
   record.maxPayout = toDecimal(market.getMaxPayout(), DECIMAL_PLACES);
   record.sold = toDecimal(market.getSold(), DECIMAL_PLACES);
   record.purchased = toDecimal(market.getPurchased(), DECIMAL_PLACES);
-  // record.controlVariable = controlVariable.divDecimal(scale.toBigDecimal());
+
+  // Set the control variable from the last Tuned event
+  const tunedEvent = TunedEvent.load(`${contractAddressLower}/${contractId}/${metadata.getLastTune().toString()}`);
+  if (!tunedEvent) {
+    log.warning("Unable to find tuning event for contract {}, id {} and last tuning with timestamp {}. Setting values to 0.", [contractAddressLower, contractId.toString(), metadata.getLastTune().toString()]);
+    record.previousControlVariable = BigInt.zero();
+    record.controlVariable = BigInt.zero();
+  }
+  else {
+    record.previousControlVariable = tunedEvent.previousControlVariable;
+    record.controlVariable = tunedEvent.newControlVariable;
+  }
 
   // Market metadata
   record.tuneIntervalSeconds = metadata.getTuneInterval();
@@ -117,4 +126,17 @@ export function handleBlock(block: ethereum.Block): void {
       generateRecord(bondContracts[h], bondIds[i].toU64(), block);
     }
   }
+}
+
+export function handleTunedEvent(event: Tuned): void {
+  // Create a new record
+  const record = new TunedEvent(`${event.address.toHexString().toLowerCase()}/${event.params.id.toString()}/${event.block.timestamp.toString()}`);
+  record.timestamp = event.block.timestamp;
+  record.block = event.block.number;
+  record.contractAddress = event.address;
+  record.contractId = event.params.id;
+  record.previousControlVariable = event.params.oldControlVariable;
+  record.newControlVariable = event.params.newControlVariable;
+  record.save();
+  log.debug("Recorded Tuned event for contract address {}, id {}, timestamp {}", [event.address.toHexString(), event.params.id.toString(), event.block.timestamp.toString()]);
 }

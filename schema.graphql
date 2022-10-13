@@ -17,7 +17,8 @@ type BondSnapshot @entity(immutable: true) {
   maxPayout: BigDecimal!
   sold: BigDecimal!
   purchased: BigDecimal!
-  # controlVariable: BigDecimal!
+  controlVariable: BigInt!
+  previousControlVariable: BigInt!
 
   tuneIntervalSeconds: BigInt!
   lastTuneTimestamp: BigInt! # Unix epoch
@@ -27,7 +28,7 @@ type BondSnapshot @entity(immutable: true) {
   nextTuneDate: String!
 
   debtDecayIntervalSeconds: BigInt!
-  lastDecayTimestamp: BigInt! # Unit epoch
+  lastDecayTimestamp: BigInt! # Unix epoch
   lastDecayDate: String!
   lastDecaySecondsAgo: BigInt!
   nextDecayInSeconds: BigInt!
@@ -38,4 +39,14 @@ type BondSnapshot @entity(immutable: true) {
   tuneIntervalCapacity: BigDecimal!
   tuneBelowCapacity: BigDecimal!
   lastTuneDebt: BigDecimal!
+}
+
+type TunedEvent @entity(immutable: true) {
+  id: ID! # <contract address>/<contract id>/timestamp
+  contractAddress: Bytes!
+  contractId: BigInt!
+  timestamp: BigInt!
+  block: BigInt!
+  previousControlVariable: BigInt!
+  newControlVariable: BigInt!
 }
