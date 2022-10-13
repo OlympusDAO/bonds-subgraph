@@ -17,6 +17,7 @@ type BondSnapshot @entity(immutable: true) {
   maxPayout: BigDecimal!
   sold: BigDecimal!
   purchased: BigDecimal!
+  # controlVariable: BigDecimal!
 
   tuneIntervalSeconds: BigInt!
   lastTuneTimestamp: BigInt! # Unix epoch

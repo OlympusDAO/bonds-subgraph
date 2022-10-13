@@ -18,6 +18,8 @@ dataSources:
       abis:
         - name: BondFixedExpirySDA
           file: ./abis/BondFixedExpirySDA.json
+        - name: BondAggregator
+          file: ./abis/BondAggregator.json
       blockHandlers:
         - handler: handleBlock
       file: ./src/handler.ts

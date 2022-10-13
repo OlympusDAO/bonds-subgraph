@@ -1,18 +1,21 @@
 import { Address, BigInt, ethereum } from "@graphprotocol/graph-ts";
 
+import { BondAggregator } from "../generated/BondFixedExpirySDA/BondAggregator";
 import { BondFixedExpirySDA } from "../generated/BondFixedExpirySDA/BondFixedExpirySDA";
 import { BondSnapshot } from "../generated/schema";
 import { getISO8601StringFromTimestamp } from "./DateHelper";
 import { toDecimal } from "./NumberHelper";
 
-const BOND_CONTRACT = "0x007FEA7A23da99F3Ce7eA34F976f32BF79A09C43";
-const BOND_IDS: u64[] = [1, 2];
+const BOND_AGGREGATOR = "0x007A66B9e719b3aBb2f3917Eb47D4231a17F5a0D";
+const BOND_CONTRACT_V1 = "0x007FEA7A23da99F3Ce7eA34F976f32BF79A09C43";
+const BOND_CONTRACT_V2 = "0x007FEA2a31644F20b0fE18f69643890b6F878AA6";
 const DECIMAL_PLACES = 9; // OHM
+const OHM_V2 = "0x64aa3364F17a4D01c6f1751Fd97C2BD3D7e7f1D5";
 
-function generateRecord(contractId: u64, block: ethereum.Block): void {
-  const recordId = `${BOND_CONTRACT}/${contractId}/${block.number.toString()}`;
+function generateRecord(contractAddress: string, contractId: u64, block: ethereum.Block): void {
+  const recordId = `${contractAddress}/${contractId}/${block.number.toString()}`;
   const record = new BondSnapshot(recordId);
-  const bondContractAddress = Address.fromString(BOND_CONTRACT);
+  const bondContractAddress = Address.fromString(contractAddress);
   const contractIdBigInt = BigInt.fromU64(contractId);
 
   // Basic data
@@ -28,12 +31,14 @@ function generateRecord(contractId: u64, block: ethereum.Block): void {
   const isLiveResult = bondContract.try_isLive(contractIdBigInt);
   const priceResult = bondContract.try_marketPrice(contractIdBigInt);
   const metadataResult = bondContract.try_metadata(contractIdBigInt);
+  // const controlVariableResult = bondContract.try_currentControlVariable(contractIdBigInt);
   // Market doesn't exist at this block
   if (
     marketResult.reverted ||
     isLiveResult.reverted ||
     priceResult.reverted ||
-    metadataResult.reverted
+    metadataResult.reverted // ||
+    // controlVariableResult.reverted
   ) {
     return;
   }
@@ -43,6 +48,7 @@ function generateRecord(contractId: u64, block: ethereum.Block): void {
   const isLive = isLiveResult.value;
   const price = priceResult.value;
   const metadata = metadataResult.value;
+  // const controlVariable = controlVariableResult.value;
 
   // Market data
   record.isLive = isLive;
@@ -56,6 +62,7 @@ function generateRecord(contractId: u64, block: ethereum.Block): void {
   record.maxPayout = toDecimal(market.getMaxPayout(), DECIMAL_PLACES);
   record.sold = toDecimal(market.getSold(), DECIMAL_PLACES);
   record.purchased = toDecimal(market.getPurchased(), DECIMAL_PLACES);
+  // record.controlVariable = controlVariable.divDecimal(scale.toBigDecimal());
 
   // Market metadata
   record.tuneIntervalSeconds = metadata.getTuneInterval();
@@ -95,7 +102,19 @@ export function handleBlock(block: ethereum.Block): void {
     return;
   }
 
-  for (let i = 0; i < BOND_IDS.length; i++) {
-    generateRecord(BOND_IDS[i], block);
+  // Grab the live markets from the aggregator
+  const aggregatorContract = BondAggregator.bind(Address.fromString(BOND_AGGREGATOR));
+  const marketsForResult = aggregatorContract.try_liveMarketsFor(Address.fromString(OHM_V2), false);
+  if (marketsForResult.reverted) {
+    throw new Error("Unable to access bond aggregator at block " + block.number.toString());
+  }
+
+  const bondContracts = [BOND_CONTRACT_V1, BOND_CONTRACT_V2];
+  const bondIds = marketsForResult.value;
+  // Try V1 and V2 contracts
+  for (let h = 0; h < bondContracts.length; h++) {
+    for (let i = 0; i < bondIds.length; i++) {
+      generateRecord(bondContracts[h], bondIds[i].toU64(), block);
+    }
   }
 }
