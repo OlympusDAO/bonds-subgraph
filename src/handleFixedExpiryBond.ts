@@ -137,11 +137,10 @@ export function handleTunedEvent(event: Tuned): void {
   log.debug("Recorded Tuned event for contract address {}, id {}, timestamp {}", [event.address.toHexString(), event.params.id.toString(), event.block.timestamp.toString()]);
 }
 
-function createMarket(marketId: BigInt, block: ethereum.Block, contractAddress: Address): Market {
+function createMarket(marketId: BigInt, initialPrice: BigInt, vesting: BigInt, block: ethereum.Block, contractAddress: Address): Market {
   const bondContract = BondFixedExpirySDA.bind(contractAddress);
   const marketResult = bondContract.markets(marketId);
-  const scale = marketResult.getScale();
-  const scaleInt = scale.toU32();
+  const scale = marketResult.getScale().toBigDecimal();
 
   const payoutToken = ERC20.bind(marketResult.getPayoutToken());
   const quoteToken = ERC20.bind(marketResult.getQuoteToken());
@@ -153,9 +152,11 @@ function createMarket(marketId: BigInt, block: ethereum.Block, contractAddress: 
   market.quoteToken = marketResult.getQuoteToken();
   market.capacityInQuote = marketResult.getCapacityInQuote();
   market.capacity = toDecimal(marketResult.getCapacity(), market.capacityInQuote ? quoteToken.decimals() : payoutToken.decimals());
-  market.totalDebt = toDecimal(marketResult.getTotalDebt(), scaleInt);
-  market.minPrice = toDecimal(marketResult.getMinPrice(), scaleInt);
-  market.maxPayout = toDecimal(marketResult.getMaxPayout(), scaleInt);
+  market.vesting = vesting;
+  market.totalDebt = marketResult.getTotalDebt().toBigDecimal().div(scale);
+  market.initialPrice = initialPrice.toBigDecimal().div(scale);
+  market.minPrice = marketResult.getMinPrice().toBigDecimal().div(scale);
+  market.maxPayout = marketResult.getMaxPayout().toBigDecimal().div(scale);
   market.createdDate = getISO8601StringFromTimestamp(block.timestamp);
   market.createdTimestamp = getUnixTimestamp(block.timestamp);
   market.createdBlock = block.number;
@@ -179,7 +180,7 @@ export function handleMarketCreated(event: MarketCreated): void {
   marketCreated.timestamp = getUnixTimestamp(event.block.timestamp);
   marketCreated.block = event.block.number;
 
-  const market = createMarket(event.params.id, event.block, event.address);
+  const market = createMarket(event.params.id, event.params.initialPrice, event.params.vesting, event.block, event.address);
   marketCreated.market = market.id;
 
   marketCreated.save();

@@ -64,7 +64,9 @@ type Market @entity {
   quoteToken: Bytes!
   capacity: BigDecimal!
   capacityInQuote: Boolean!
+  vesting: BigInt!
   totalDebt: BigDecimal!
+  initialPrice: BigDecimal!
   minPrice: BigDecimal!
   maxPayout: BigDecimal!
   createdBlock: BigInt!

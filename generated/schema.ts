@@ -528,6 +528,15 @@ export class Market extends Entity {
     this.set("capacityInQuote", Value.fromBoolean(value));
   }
 
+  get vesting(): BigInt {
+    const value = this.get("vesting");
+    return value!.toBigInt();
+  }
+
+  set vesting(value: BigInt) {
+    this.set("vesting", Value.fromBigInt(value));
+  }
+
   get totalDebt(): BigDecimal {
     const value = this.get("totalDebt");
     return value!.toBigDecimal();
@@ -535,6 +544,15 @@ export class Market extends Entity {
 
   set totalDebt(value: BigDecimal) {
     this.set("totalDebt", Value.fromBigDecimal(value));
+  }
+
+  get initialPrice(): BigDecimal {
+    const value = this.get("initialPrice");
+    return value!.toBigDecimal();
+  }
+
+  set initialPrice(value: BigDecimal) {
+    this.set("initialPrice", Value.fromBigDecimal(value));
   }
 
   get minPrice(): BigDecimal {
