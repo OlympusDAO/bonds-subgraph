@@ -4,15 +4,9 @@ import { BondAggregator } from "../generated/BondFixedExpirySDAv1/BondAggregator
 import { BondFixedExpirySDA, MarketClosed, MarketCreated, Tuned } from "../generated/BondFixedExpirySDAv1/BondFixedExpirySDA";
 import { ERC20 } from "../generated/BondFixedExpirySDAv1/ERC20";
 import { BondSnapshot, Market, MarketClosedEvent, MarketCreatedEvent, TunedEvent } from "../generated/schema";
+import { DECIMAL_PLACES, BOND_AGGREGATOR, OHM_V2, FIXED_EXPIRY_SDA_V1, FIXED_EXPIRY_SDA_V2 } from "./constants";
 import { getISO8601StringFromTimestamp, getUnixTimestamp } from "./helpers/DateHelper";
 import { toDecimal } from "./helpers/NumberHelper";
-
-const BOND_AGGREGATOR = "0x007A66B9e719b3aBb2f3917Eb47D4231a17F5a0D";
-const Fixed_Expiry_SDA_V1 = "0x007FEA7A23da99F3Ce7eA34F976f32BF79A09C43";
-const Fixed_Expiry_SDA_V2 = "0x007FEA2a31644F20b0fE18f69643890b6F878AA6";
-const Fixed_Expiry_SDA_V3 = "0x007FEA32545a39Ff558a1367BBbC1A22bc7ABEfD";
-const DECIMAL_PLACES = 9; // OHM
-const OHM_V2 = "0x64aa3364F17a4D01c6f1751Fd97C2BD3D7e7f1D5";
 
 function generateMarketSnapshot(contractAddress: string, contractId: u64, block: ethereum.Block): void {
   const contractAddressLower = contractAddress.toLowerCase();
@@ -120,7 +114,7 @@ export function handleBlock(block: ethereum.Block): void {
     throw new Error("Unable to access bond aggregator at block " + block.number.toString());
   }
 
-  const bondContracts = [Fixed_Expiry_SDA_V1, Fixed_Expiry_SDA_V2];
+  const bondContracts = [FIXED_EXPIRY_SDA_V1, FIXED_EXPIRY_SDA_V2];
   const bondIds = marketsForResult.value;
   // Try V1 and V2 contracts
   for (let h = 0; h < bondContracts.length; h++) {

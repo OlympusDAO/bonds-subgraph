@@ -16,6 +16,10 @@ dataSources:
       language: wasm/assemblyscript
       entities:
         - BondSnapshot
+        - TunedEvent
+        - Market
+        - MarketCreatedEvent
+        - MarketClosedEvent
       abis:
         - name: BondFixedExpirySDA
           file: ./abis/BondFixedExpirySDA.json
@@ -46,6 +50,10 @@ dataSources:
       language: wasm/assemblyscript
       entities:
         - BondSnapshot
+        - TunedEvent
+        - Market
+        - MarketCreatedEvent
+        - MarketClosedEvent
       abis:
         - name: BondFixedExpirySDA
           file: ./abis/BondFixedExpirySDA.json
@@ -76,6 +84,10 @@ dataSources:
       language: wasm/assemblyscript
       entities:
         - BondSnapshot
+        - TunedEvent
+        - Market
+        - MarketCreatedEvent
+        - MarketClosedEvent
       abis:
         - name: BondFixedExpirySDA
           file: ./abis/BondFixedExpirySDA.json
@@ -93,3 +105,32 @@ dataSources:
         - event: MarketClosed(indexed uint256)
           handler: handleMarketClosed
       file: ./src/handleFixedExpiryBond.ts
+  # Fixed Term
+  - kind: ethereum
+    name: BondFixedTermSDAv3
+    network: mainnet
+    source:
+      address: "0x007F7A1cb838A872515c8ebd16bE4b14Ef43a222"
+      abi: BondFixedTermSDA
+      startBlock: 15998040
+    mapping:
+      kind: ethereum/events
+      apiVersion: 0.0.6
+      language: wasm/assemblyscript
+      entities:
+        - Market
+        - MarketCreatedEvent
+        - MarketClosedEvent
+      abis:
+        - name: BondFixedTermSDA
+          file: ./abis/BondFixedTermSDA.json
+        - name: BondAggregator
+          file: ./abis/BondAggregator.json
+        - name: ERC20
+          file: ./abis/ERC20.json
+      eventHandlers:
+        - event: MarketCreated(indexed uint256,indexed address,indexed address,uint48,uint256)
+          handler: handleMarketCreated
+        - event: MarketClosed(indexed uint256)
+          handler: handleMarketClosed
+      file: ./src/handleFixedTermBond.ts
