@@ -72,8 +72,8 @@ type Market @entity {
   createdBlock: BigInt!
   createdDate: String!
   createdTimestamp: BigInt!
-  closedBlock: BigInt!
-  closedDate: String!
+  closedBlock: BigInt
+  closedDate: String
   closedTimestamp: BigInt
 }
 

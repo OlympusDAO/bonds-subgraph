@@ -600,22 +600,38 @@ export class Market extends Entity {
     this.set("createdTimestamp", Value.fromBigInt(value));
   }
 
-  get closedBlock(): BigInt {
+  get closedBlock(): BigInt | null {
     const value = this.get("closedBlock");
-    return value!.toBigInt();
+    if (!value || value.kind == ValueKind.NULL) {
+      return null;
+    } else {
+      return value.toBigInt();
+    }
   }
 
-  set closedBlock(value: BigInt) {
-    this.set("closedBlock", Value.fromBigInt(value));
+  set closedBlock(value: BigInt | null) {
+    if (!value) {
+      this.unset("closedBlock");
+    } else {
+      this.set("closedBlock", Value.fromBigInt(<BigInt>value));
+    }
   }
 
-  get closedDate(): string {
+  get closedDate(): string | null {
     const value = this.get("closedDate");
-    return value!.toString();
+    if (!value || value.kind == ValueKind.NULL) {
+      return null;
+    } else {
+      return value.toString();
+    }
   }
 
-  set closedDate(value: string) {
-    this.set("closedDate", Value.fromString(value));
+  set closedDate(value: string | null) {
+    if (!value) {
+      this.unset("closedDate");
+    } else {
+      this.set("closedDate", Value.fromString(<string>value));
+    }
   }
 
   get closedTimestamp(): BigInt | null {
