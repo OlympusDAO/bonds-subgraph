@@ -483,6 +483,15 @@ export class Market extends Entity {
     this.set("bondContract", Value.fromBytes(value));
   }
 
+  get bondType(): string {
+    const value = this.get("bondType");
+    return value!.toString();
+  }
+
+  set bondType(value: string) {
+    this.set("bondType", Value.fromString(value));
+  }
+
   get payoutToken(): Bytes {
     const value = this.get("payoutToken");
     return value!.toBytes();

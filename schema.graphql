@@ -51,9 +51,15 @@ type TunedEvent @entity(immutable: true) {
   newControlVariable: BigInt!
 }
 
+enum BondType {
+  FixedTerm
+  FixedExpiry
+}
+
 type Market @entity {
   id: ID!
   bondContract: Bytes!
+  bondType: BondType!
   payoutToken: Bytes!
   quoteToken: Bytes!
   capacity: BigDecimal!

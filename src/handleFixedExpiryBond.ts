@@ -154,6 +154,7 @@ function createMarket(marketId: BigInt, block: ethereum.Block, contractAddress: 
 
   const market = new Market(`${marketId}`);
   market.bondContract = contractAddress;
+  market.bondType = "FixedExpiry";
   market.payoutToken = marketResult.getPayoutToken();
   market.quoteToken = marketResult.getQuoteToken();
   market.capacityInQuote = marketResult.getCapacityInQuote();
