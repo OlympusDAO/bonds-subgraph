@@ -21,3 +21,7 @@ export const getISO8601DateStringFromTimestamp = (timestamp: BigInt): string => 
 export const getISO8601StringFromTimestamp = (timestamp: BigInt): string => {
   return getDateFromUnixTimestamp(timestamp).toISOString();
 };
+
+export function getUnixTimestamp(timestamp: BigInt): BigInt {
+  return timestamp.times(BigInt.fromString("1000"));
+}

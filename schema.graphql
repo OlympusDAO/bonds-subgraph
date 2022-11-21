@@ -50,3 +50,39 @@ type TunedEvent @entity(immutable: true) {
   previousControlVariable: BigInt!
   newControlVariable: BigInt!
 }
+
+type Market @entity {
+  id: ID!
+  bondContract: Bytes!
+  payoutToken: Bytes!
+  quoteToken: Bytes!
+  capacity: BigDecimal!
+  capacityInQuote: Boolean!
+  totalDebt: BigDecimal!
+  minPrice: BigDecimal!
+  maxPayout: BigDecimal!
+  createdBlock: BigInt!
+  createdDate: String!
+  createdTimestamp: BigInt!
+  closedBlock: BigInt!
+  closedDate: String!
+  closedTimestamp: BigInt
+}
+
+type MarketCreatedEvent @entity(immutable: true) {
+  id: ID!
+  marketId: BigInt!
+  date: String!
+  timestamp: BigInt!
+  block: BigInt!
+  market: Market!
+}
+
+type MarketClosedEvent @entity(immutable: true) {
+  id: ID!
+  marketId: BigInt!
+  date: String!
+  timestamp: BigInt!
+  block: BigInt!
+  market: Market!
+}

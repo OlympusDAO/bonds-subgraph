@@ -2,6 +2,7 @@ specVersion: 0.0.4
 schema:
   file: ./schema.graphql
 dataSources:
+  # Fixed Expiry
   - kind: ethereum
     name: BondFixedExpirySDA
     network: mainnet
@@ -20,9 +21,15 @@ dataSources:
           file: ./abis/BondFixedExpirySDA.json
         - name: BondAggregator
           file: ./abis/BondAggregator.json
+        - name: ERC20
+          file: ./abis/ERC20.json
       blockHandlers:
         - handler: handleBlock
       eventHandlers:
         - event: Tuned(indexed uint256,uint256,uint256)
           handler: handleTunedEvent
-      file: ./src/handler.ts
+        - event: MarketCreated(indexed uint256,indexed address,indexed address,uint48,uint256)
+          handler: handleMarketCreated
+        - event: MarketClosed(indexed uint256)
+          handler: handleMarketClosed
+      file: ./src/handleFixedExpiryBondV1.ts
