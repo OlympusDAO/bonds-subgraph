@@ -3,8 +3,8 @@ import { Address, BigInt, ethereum, log } from "@graphprotocol/graph-ts";
 import { BondAggregator } from "../generated/BondFixedExpirySDA/BondAggregator";
 import { BondFixedExpirySDA, Tuned } from "../generated/BondFixedExpirySDA/BondFixedExpirySDA";
 import { BondSnapshot, TunedEvent } from "../generated/schema";
-import { getISO8601StringFromTimestamp } from "./DateHelper";
-import { toDecimal } from "./NumberHelper";
+import { getISO8601StringFromTimestamp } from "./helpers/DateHelper";
+import { toDecimal } from "./helpers/NumberHelper";
 
 const BOND_AGGREGATOR = "0x007A66B9e719b3aBb2f3917Eb47D4231a17F5a0D";
 const BOND_CONTRACT_V1 = "0x007FEA7A23da99F3Ce7eA34F976f32BF79A09C43";
