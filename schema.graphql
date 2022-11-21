@@ -65,10 +65,10 @@ type Market @entity {
   capacity: BigDecimal!
   capacityInQuote: Boolean!
   vesting: BigInt!
-  totalDebt: BigDecimal!
+  totalDebt: BigDecimal! # Same unit as capacity
   initialPrice: BigDecimal!
   minPrice: BigDecimal!
-  maxPayout: BigDecimal!
+  maxPayout: BigDecimal! # Same unit as capacity
   createdBlock: BigInt!
   createdDate: String!
   createdTimestamp: BigInt!

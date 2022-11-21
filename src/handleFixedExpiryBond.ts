@@ -151,12 +151,14 @@ function createMarket(marketId: BigInt, initialPrice: BigInt, vesting: BigInt, b
   market.payoutToken = marketResult.getPayoutToken();
   market.quoteToken = marketResult.getQuoteToken();
   market.capacityInQuote = marketResult.getCapacityInQuote();
-  market.capacity = toDecimal(marketResult.getCapacity(), market.capacityInQuote ? quoteToken.decimals() : payoutToken.decimals());
+
+  const tokenDecimals = market.capacityInQuote ? quoteToken.decimals() : payoutToken.decimals();
+  market.capacity = toDecimal(marketResult.getCapacity(), tokenDecimals);
   market.vesting = vesting;
-  market.totalDebt = marketResult.getTotalDebt().toBigDecimal().div(scale);
+  market.totalDebt = toDecimal(marketResult.getTotalDebt(), tokenDecimals);
   market.initialPrice = initialPrice.toBigDecimal().div(scale);
   market.minPrice = marketResult.getMinPrice().toBigDecimal().div(scale);
-  market.maxPayout = marketResult.getMaxPayout().toBigDecimal().div(scale);
+  market.maxPayout = toDecimal(marketResult.getMaxPayout(), tokenDecimals);
   market.createdDate = getISO8601StringFromTimestamp(block.timestamp);
   market.createdTimestamp = getUnixTimestamp(block.timestamp);
   market.createdBlock = block.number;
