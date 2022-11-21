@@ -32,4 +32,4 @@ dataSources:
           handler: handleMarketCreated
         - event: MarketClosed(indexed uint256)
           handler: handleMarketClosed
-      file: ./src/handleFixedExpiryBondV1.ts
+      file: ./src/handleFixedExpiryBond.ts
