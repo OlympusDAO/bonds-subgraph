@@ -519,22 +519,13 @@ export class Market extends Entity {
     this.set("quoteToken", Value.fromBytes(value));
   }
 
-  get capacity(): BigDecimal {
-    const value = this.get("capacity");
+  get capacityInQuoteToken(): BigDecimal {
+    const value = this.get("capacityInQuoteToken");
     return value!.toBigDecimal();
   }
 
-  set capacity(value: BigDecimal) {
-    this.set("capacity", Value.fromBigDecimal(value));
-  }
-
-  get capacityInQuote(): boolean {
-    const value = this.get("capacityInQuote");
-    return value!.toBoolean();
-  }
-
-  set capacityInQuote(value: boolean) {
-    this.set("capacityInQuote", Value.fromBoolean(value));
+  set capacityInQuoteToken(value: BigDecimal) {
+    this.set("capacityInQuoteToken", Value.fromBigDecimal(value));
   }
 
   get vesting(): BigInt {
@@ -546,40 +537,40 @@ export class Market extends Entity {
     this.set("vesting", Value.fromBigInt(value));
   }
 
-  get totalDebt(): BigDecimal {
-    const value = this.get("totalDebt");
+  get totalDebtInQuoteToken(): BigDecimal {
+    const value = this.get("totalDebtInQuoteToken");
     return value!.toBigDecimal();
   }
 
-  set totalDebt(value: BigDecimal) {
-    this.set("totalDebt", Value.fromBigDecimal(value));
+  set totalDebtInQuoteToken(value: BigDecimal) {
+    this.set("totalDebtInQuoteToken", Value.fromBigDecimal(value));
   }
 
-  get initialPrice(): BigDecimal {
-    const value = this.get("initialPrice");
+  get initialPriceInPayoutToken(): BigDecimal {
+    const value = this.get("initialPriceInPayoutToken");
     return value!.toBigDecimal();
   }
 
-  set initialPrice(value: BigDecimal) {
-    this.set("initialPrice", Value.fromBigDecimal(value));
+  set initialPriceInPayoutToken(value: BigDecimal) {
+    this.set("initialPriceInPayoutToken", Value.fromBigDecimal(value));
   }
 
-  get minPrice(): BigDecimal {
-    const value = this.get("minPrice");
+  get minPriceInPayoutToken(): BigDecimal {
+    const value = this.get("minPriceInPayoutToken");
     return value!.toBigDecimal();
   }
 
-  set minPrice(value: BigDecimal) {
-    this.set("minPrice", Value.fromBigDecimal(value));
+  set minPriceInPayoutToken(value: BigDecimal) {
+    this.set("minPriceInPayoutToken", Value.fromBigDecimal(value));
   }
 
-  get maxPayout(): BigDecimal {
-    const value = this.get("maxPayout");
+  get maxPayoutInQuoteToken(): BigDecimal {
+    const value = this.get("maxPayoutInQuoteToken");
     return value!.toBigDecimal();
   }
 
-  set maxPayout(value: BigDecimal) {
-    this.set("maxPayout", Value.fromBigDecimal(value));
+  set maxPayoutInQuoteToken(value: BigDecimal) {
+    this.set("maxPayoutInQuoteToken", Value.fromBigDecimal(value));
   }
 
   get createdBlock(): BigInt {

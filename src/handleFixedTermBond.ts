@@ -4,16 +4,14 @@ import { ERC20 } from "../generated/BondFixedTermSDAv3/ERC20";
 import { Market, MarketClosedEvent, MarketCreatedEvent } from "../generated/schema";
 import { OHM_V2 } from "./constants";
 import { getISO8601StringFromTimestamp, getUnixTimestamp } from "./helpers/DateHelper";
-import { toDecimal } from "./helpers/NumberHelper";
+import { convertScaledNumber, getCapacity, removeScale } from "./helpers/MarketHelper";
 
 function createMarket(marketId: BigInt, initialPrice: BigInt, vesting: BigInt, block: ethereum.Block, contractAddress: Address): Market {
     const bondContract = BondFixedTermSDA.bind(contractAddress);
     const marketResult = bondContract.markets(marketId);
-    const scale = marketResult.getScale().toBigDecimal();
 
     const payoutToken = ERC20.bind(marketResult.getPayoutToken());
     const quoteToken = ERC20.bind(marketResult.getQuoteToken());
-    const tokenDecimals = marketResult.getCapacityInQuote() ? quoteToken.decimals() : payoutToken.decimals();
 
     const market = new Market(`${marketId}`);
     market.bondContract = contractAddress;
@@ -21,13 +19,15 @@ function createMarket(marketId: BigInt, initialPrice: BigInt, vesting: BigInt, b
     market.owner = marketResult.getOwner();
     market.payoutToken = marketResult.getPayoutToken();
     market.quoteToken = marketResult.getQuoteToken();
-    market.capacityInQuote = marketResult.getCapacityInQuote();
-    market.capacity = toDecimal(marketResult.getCapacity(), tokenDecimals);
+
+    market.capacityInQuoteToken = getCapacity(marketResult.getCapacity(), marketResult.getCapacityInQuote(), payoutToken.decimals(), quoteToken.decimals(), initialPrice, marketResult.getScale());
+    market.totalDebtInQuoteToken = convertScaledNumber(marketResult.getTotalDebt(), marketResult.getScale(), payoutToken.decimals(), quoteToken.decimals());
+    market.maxPayoutInQuoteToken = convertScaledNumber(marketResult.getMaxPayout(), marketResult.getScale(), payoutToken.decimals(), quoteToken.decimals());
+
+    market.initialPriceInPayoutToken = removeScale(initialPrice, marketResult.getScale());
+    market.minPriceInPayoutToken = removeScale(marketResult.getMinPrice(), marketResult.getScale());
+
     market.vesting = vesting;
-    market.totalDebt = toDecimal(marketResult.getTotalDebt(), tokenDecimals);
-    market.initialPrice = initialPrice.toBigDecimal().div(scale);
-    market.minPrice = marketResult.getMinPrice().toBigDecimal().div(scale);
-    market.maxPayout = toDecimal(marketResult.getMaxPayout(), tokenDecimals);
     market.createdDate = getISO8601StringFromTimestamp(block.timestamp);
     market.createdTimestamp = getUnixTimestamp(block.timestamp);
     market.createdBlock = block.number;
