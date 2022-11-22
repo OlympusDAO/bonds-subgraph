@@ -23,6 +23,12 @@ export function getCapacity(
     return capacityInQuote ? capacityDecimal : capacityDecimal.div(initialPriceScaled);
 }
 
+/**
+ * The price decimal scaling for a market is split between
+ * the price value and the scale value to be able to support a broader range of inputs.
+ * Specifically, half of it is in the scale and half in the price.
+ * To normalize the price value for display, we can add the half that is in the scale factor back to it.
+ */
 export function convertScaledNumber(
     number: BigInt,
     scale: BigInt,
