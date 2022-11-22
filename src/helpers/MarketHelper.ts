@@ -28,6 +28,9 @@ export function getCapacity(
  * the price value and the scale value to be able to support a broader range of inputs.
  * Specifically, half of it is in the scale and half in the price.
  * To normalize the price value for display, we can add the half that is in the scale factor back to it.
+ * 
+ * used only for price
+ * 36 decimal places
  */
 export function convertScaledNumber(
     number: BigInt,

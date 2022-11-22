@@ -152,6 +152,11 @@ function createMarket(marketId: BigInt, initialPrice: BigInt, vesting: BigInt, b
   market.payoutToken = marketResult.getPayoutToken();
   market.quoteToken = marketResult.getQuoteToken();
 
+  // capacity: if quote token, quote token decimals, else payout token decimals
+  // debt: payout token decimals
+  // max payout: payout token decimals
+  // price values need to be scaled, 36 dp
+
   // TODO add amounts in both quote and payout tokens
   market.capacityInQuoteToken = getCapacity(marketResult.getCapacity(), marketResult.getCapacityInQuote(), payoutToken.decimals(), quoteToken.decimals(), initialPrice, marketResult.getScale());
   market.totalDebtInQuoteToken = convertScaledNumber(marketResult.getTotalDebt(), marketResult.getScale(), payoutToken.decimals(), quoteToken.decimals());
