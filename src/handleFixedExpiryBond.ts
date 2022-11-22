@@ -144,15 +144,15 @@ function createMarket(marketId: BigInt, initialPrice: BigInt, vesting: BigInt, b
 
   const payoutToken = ERC20.bind(marketResult.getPayoutToken());
   const quoteToken = ERC20.bind(marketResult.getQuoteToken());
+  const tokenDecimals = marketResult.getCapacityInQuote() ? quoteToken.decimals() : payoutToken.decimals();
 
   const market = new Market(`${marketId}`);
   market.bondContract = contractAddress;
   market.bondType = "FixedExpiry";
+  market.owner = marketResult.getOwner();
   market.payoutToken = marketResult.getPayoutToken();
   market.quoteToken = marketResult.getQuoteToken();
   market.capacityInQuote = marketResult.getCapacityInQuote();
-
-  const tokenDecimals = market.capacityInQuote ? quoteToken.decimals() : payoutToken.decimals();
   market.capacity = toDecimal(marketResult.getCapacity(), tokenDecimals);
   market.vesting = vesting;
   market.totalDebt = toDecimal(marketResult.getTotalDebt(), tokenDecimals);

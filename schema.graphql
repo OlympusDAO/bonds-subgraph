@@ -60,6 +60,7 @@ type Market @entity {
   id: ID!
   bondContract: Bytes!
   bondType: BondType!
+  owner: Bytes!
   payoutToken: Bytes!
   quoteToken: Bytes!
   capacity: BigDecimal!

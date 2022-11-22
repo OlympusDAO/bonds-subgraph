@@ -492,6 +492,15 @@ export class Market extends Entity {
     this.set("bondType", Value.fromString(value));
   }
 
+  get owner(): Bytes {
+    const value = this.get("owner");
+    return value!.toBytes();
+  }
+
+  set owner(value: Bytes) {
+    this.set("owner", Value.fromBytes(value));
+  }
+
   get payoutToken(): Bytes {
     const value = this.get("payoutToken");
     return value!.toBytes();
