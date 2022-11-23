@@ -63,15 +63,19 @@ type Market @entity {
   owner: Bytes!
   payoutToken: Bytes!
   quoteToken: Bytes!
-  capacityInQuoteToken: BigDecimal!
   vesting: BigInt!
-  totalDebtInQuoteToken: BigDecimal!
-  initialPriceInPayoutToken: BigDecimal!
-  minPriceInPayoutToken: BigDecimal!
-  maxPayoutInQuoteToken: BigDecimal!
+
+  capacityInPayoutToken: BigDecimal!
+  totalDebtInPayoutToken: BigDecimal!
+  maxPayoutInPayoutToken: BigDecimal!
+
+  initialPriceInQuoteToken: BigDecimal!
+  minPriceInQuoteToken: BigDecimal!
+
   createdBlock: BigInt!
   createdDate: String!
   createdTimestamp: BigInt!
+
   closedBlock: BigInt
   closedDate: String
   closedTimestamp: BigInt

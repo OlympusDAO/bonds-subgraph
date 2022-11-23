@@ -6,7 +6,7 @@ import { ERC20 } from "../generated/BondFixedExpirySDAv1/ERC20";
 import { BondSnapshot, Market, MarketClosedEvent, MarketCreatedEvent, TunedEvent } from "../generated/schema";
 import { DECIMAL_PLACES, BOND_AGGREGATOR, OHM_V2, FIXED_EXPIRY_SDA_V1, FIXED_EXPIRY_SDA_V2 } from "./constants";
 import { getISO8601StringFromTimestamp, getUnixTimestamp } from "./helpers/DateHelper";
-import { getCapacity, convertScaledNumber, removeScale } from "./helpers/MarketHelper";
+import { payoutTokenToDecimal, priceToDecimal } from "./helpers/MarketHelper";
 import { toDecimal } from "./helpers/NumberHelper";
 
 function generateMarketSnapshot(contractAddress: string, contractId: u64, block: ethereum.Block): void {
@@ -151,21 +151,20 @@ function createMarket(marketId: BigInt, initialPrice: BigInt, vesting: BigInt, b
   market.owner = marketResult.getOwner();
   market.payoutToken = marketResult.getPayoutToken();
   market.quoteToken = marketResult.getQuoteToken();
-
-  // capacity: if quote token, quote token decimals, else payout token decimals
-  // debt: payout token decimals
-  // max payout: payout token decimals
-  // price values need to be scaled, 36 dp
-
-  // TODO add amounts in both quote and payout tokens
-  market.capacityInQuoteToken = getCapacity(marketResult.getCapacity(), marketResult.getCapacityInQuote(), payoutToken.decimals(), quoteToken.decimals(), initialPrice, marketResult.getScale());
-  market.totalDebtInQuoteToken = convertScaledNumber(marketResult.getTotalDebt(), marketResult.getScale(), payoutToken.decimals(), quoteToken.decimals());
-  market.maxPayoutInQuoteToken = convertScaledNumber(marketResult.getMaxPayout(), marketResult.getScale(), payoutToken.decimals(), quoteToken.decimals());
-
-  market.initialPriceInPayoutToken = removeScale(initialPrice, marketResult.getScale());
-  market.minPriceInPayoutToken = removeScale(marketResult.getMinPrice(), marketResult.getScale());
-
   market.vesting = vesting;
+
+  /**
+   * NOTE: marketResult has a getCapacityInQuote() function. Implementing this would complicate matters,
+   * and RBS will never set this to true, so we conveniently ignore it and assume the capacity is in terms
+   * of the payout token.
+   */
+  market.capacityInPayoutToken = payoutTokenToDecimal(marketResult.getCapacity(), payoutToken.decimals());
+  market.totalDebtInPayoutToken = payoutTokenToDecimal(marketResult.getTotalDebt(), payoutToken.decimals());
+  market.maxPayoutInPayoutToken = payoutTokenToDecimal(marketResult.getMaxPayout(), payoutToken.decimals());
+
+  market.initialPriceInQuoteToken = priceToDecimal(initialPrice, marketResult.getScale(), u8(payoutToken.decimals()), u8(quoteToken.decimals()));
+  market.minPriceInQuoteToken = priceToDecimal(marketResult.getMinPrice(), marketResult.getScale(), u8(payoutToken.decimals()), u8(quoteToken.decimals()));
+
   market.createdDate = getISO8601StringFromTimestamp(block.timestamp);
   market.createdTimestamp = getUnixTimestamp(block.timestamp);
   market.createdBlock = block.number;

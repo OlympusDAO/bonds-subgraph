@@ -1,27 +1,31 @@
 import { BigInt } from "@graphprotocol/graph-ts";
 import { assert, describe, test } from "matchstick-as";
-import { convertScaledNumber, getCapacity, removeScale } from "../src/helpers/MarketHelper";
+import { priceToDecimal, payoutTokenToDecimal } from "../src/helpers/MarketHelper";
 
-describe("removeScale", () => {
-    test("shifts decimal places by scale", () => {
-        assert.stringEquals("1", removeScale(BigInt.fromString("1000000000000000000000000000000000000"), BigInt.fromString("1000000000000000000000000000000000000")).toString());
-    });
-});
+/**
+ * These tests use outputs from a reserve bond on Goerli with the following output:
+ * 
+ * owner   address :  0x19518E4D4E542f4b0Fc27366C23FaC7a0bA491Da
+ * payoutToken   address :  0x0595328847AF962F951a4f8F8eE9A3Bf261e4f6b // OHM
+ * quoteToken   address :  0x41e38e70a36150D08A8c97aEC194321b5eB545A5 // DAI
+ * callbackAddr   address :  0x0000000000000000000000000000000000000000
+ * capacityInQuote   bool :  false
+ * capacity   uint256 :  998988669352
+ * totalDebt   uint256 :  600023314595
+ * minPrice   uint256 :  8000000000000000000000000000000000000
+ * maxPayout   uint256 :  33335185288
+ * sold   uint256 :  1011330648
+ * purchased   uint256 :  10000000000000000000
+ * scale   uint256 :  1000000000000000000000000000
+ * 
+ * initial price: 10000000000000000000000000000000000000
+ * 
+ * Based on: https://goerli.etherscan.io/tx/0x02982efc79605560b56845942ac04b34a499d4f76da4c2c0cce974245b247d4c#eventlog
+ */
 
 /**
  * 
- *   owner   address :  0x19518E4D4E542f4b0Fc27366C23FaC7a0bA491Da
-  payoutToken   address :  0x0595328847AF962F951a4f8F8eE9A3Bf261e4f6b // OHM
-  quoteToken   address :  0x41e38e70a36150D08A8c97aEC194321b5eB545A5 // DAI
-  callbackAddr   address :  0x0000000000000000000000000000000000000000
-  capacityInQuote   bool :  false
-  capacity   uint256 :  998988669352
-  totalDebt   uint256 :  600023314595
-  minPrice   uint256 :  8000000000000000000000000000000000000
-  maxPayout   uint256 :  33335185288
-  sold   uint256 :  1011330648
-  purchased   uint256 :  10000000000000000000
-  scale   uint256 :  1000000000000000000000000000
+ *  
  * 
  * 
  * 
@@ -62,26 +66,21 @@ describe("removeScale", () => {
  * purchased = quote tokens = 10000000000000000000*10^-18
  */
 
-
-describe("getCapacity", () => {
-    test("capacity in payout token", () => {
-        // Based on: https://goerli.etherscan.io/tx/0x02982efc79605560b56845942ac04b34a499d4f76da4c2c0cce974245b247d4c#eventlog
-
+describe("payoutTokenToDecimal", () => {
+    test("correct conversion", () => {
         // (998988669352*10^-9)
-        assert.stringEquals("998.988669352", getCapacity(
+        assert.stringEquals("998.988669352", payoutTokenToDecimal(
             BigInt.fromString("998988669352"),
             9,
         ).toString());
-    });
+    })
+})
 
-    // RBS will not initiate a market with capacity in quote token. don't bother converting it. send an alert.
-});
-
-describe("convertScaledNumber", () => {
-    test("handles different decimals", () => {
-        // 600023314595*((10^(36+9-18))/(1000000000000000000000000000))*10^-18 = 0.0000006
-        assert.stringEquals("600.023314595", convertScaledNumber(
-            BigInt.fromString("600023314595"),
+describe("priceToDecimal", () => {
+    test("correct conversion", () => {
+        // 10000000000000000000000000000000000000*((10^(36+9-18))/(1000000000000000000000000000))*10^-36 = 10
+        assert.stringEquals("10", priceToDecimal(
+            BigInt.fromString("10000000000000000000000000000000000000"),
             BigInt.fromString("1000000000000000000000000000"),
             9,
             18,
