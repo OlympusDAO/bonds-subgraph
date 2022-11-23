@@ -86,6 +86,8 @@ type Market @entity {
 type MarketCreatedEvent @entity(immutable: true) {
   id: ID! # <contract address>/type/<market id>
   marketId: BigInt!
+  bondContract: Bytes!
+  bondType: BondType!
   date: String!
   timestamp: BigInt!
   block: BigInt!
@@ -95,6 +97,8 @@ type MarketCreatedEvent @entity(immutable: true) {
 type MarketClosedEvent @entity(immutable: true) {
   id: ID! # <contract address>/type/<market id>
   marketId: BigInt!
+  bondContract: Bytes!
+  bondType: BondType!
   date: String!
   timestamp: BigInt!
   block: BigInt!

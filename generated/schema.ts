@@ -703,6 +703,24 @@ export class MarketCreatedEvent extends Entity {
     this.set("marketId", Value.fromBigInt(value));
   }
 
+  get bondContract(): Bytes {
+    const value = this.get("bondContract");
+    return value!.toBytes();
+  }
+
+  set bondContract(value: Bytes) {
+    this.set("bondContract", Value.fromBytes(value));
+  }
+
+  get bondType(): string {
+    const value = this.get("bondType");
+    return value!.toString();
+  }
+
+  set bondType(value: string) {
+    this.set("bondType", Value.fromString(value));
+  }
+
   get date(): string {
     const value = this.get("date");
     return value!.toString();
@@ -780,6 +798,24 @@ export class MarketClosedEvent extends Entity {
 
   set marketId(value: BigInt) {
     this.set("marketId", Value.fromBigInt(value));
+  }
+
+  get bondContract(): Bytes {
+    const value = this.get("bondContract");
+    return value!.toBytes();
+  }
+
+  set bondContract(value: Bytes) {
+    this.set("bondContract", Value.fromBytes(value));
+  }
+
+  get bondType(): string {
+    const value = this.get("bondType");
+    return value!.toString();
+  }
+
+  set bondType(value: string) {
+    this.set("bondType", Value.fromString(value));
   }
 
   get date(): string {

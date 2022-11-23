@@ -186,6 +186,8 @@ export function handleMarketCreated(event: MarketCreated): void {
 
   const marketCreated = new MarketCreatedEvent(getId(event.address, BOND_TYPE, event.params.id));
   marketCreated.marketId = event.params.id;
+  marketCreated.bondContract = event.address;
+  marketCreated.bondType = BOND_TYPE;
   marketCreated.date = getISO8601StringFromTimestamp(event.block.timestamp);
   marketCreated.timestamp = getUnixTimestamp(event.block.timestamp);
   marketCreated.block = event.block.number;
@@ -206,6 +208,8 @@ export function handleMarketClosed(event: MarketClosed): void {
 
   const marketClosed = new MarketClosedEvent(getId(event.address, BOND_TYPE, event.params.id));
   marketClosed.marketId = event.params.id;
+  marketClosed.bondContract = event.address;
+  marketClosed.bondType = BOND_TYPE;
   marketClosed.date = getISO8601StringFromTimestamp(event.block.timestamp);
   marketClosed.timestamp = getUnixTimestamp(event.block.timestamp);
   marketClosed.block = event.block.number;
