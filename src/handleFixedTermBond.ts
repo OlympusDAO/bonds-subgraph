@@ -4,7 +4,9 @@ import { ERC20 } from "../generated/BondFixedTermSDAv3/ERC20";
 import { Market, MarketClosedEvent, MarketCreatedEvent } from "../generated/schema";
 import { OHM_V2 } from "./constants";
 import { getISO8601StringFromTimestamp, getUnixTimestamp } from "./helpers/DateHelper";
-import { payoutTokenToDecimal, priceToDecimal } from "./helpers/MarketHelper";
+import { getId, payoutTokenToDecimal, priceToDecimal } from "./helpers/MarketHelper";
+
+const BOND_TYPE = "FixedTerm";
 
 function createMarket(marketId: BigInt, initialPrice: BigInt, vesting: BigInt, block: ethereum.Block, contractAddress: Address): Market {
     const bondContract = BondFixedTermSDA.bind(contractAddress);
@@ -13,9 +15,10 @@ function createMarket(marketId: BigInt, initialPrice: BigInt, vesting: BigInt, b
     const payoutToken = ERC20.bind(marketResult.getPayoutToken());
     const quoteToken = ERC20.bind(marketResult.getQuoteToken());
 
-    const market = new Market(`${marketId}`);
+    const market = new Market(getId(contractAddress, BOND_TYPE, marketId));
     market.bondContract = contractAddress;
-    market.bondType = "FixedTerm";
+    market.bondType = BOND_TYPE;
+    market.marketId = marketId;
     market.owner = marketResult.getOwner();
     market.payoutToken = marketResult.getPayoutToken();
     market.quoteToken = marketResult.getQuoteToken();
@@ -50,7 +53,7 @@ export function handleMarketCreated(event: MarketCreated): void {
         return;
     }
 
-    const marketCreated = new MarketCreatedEvent(`${event.params.id}`);
+    const marketCreated = new MarketCreatedEvent(getId(event.address, BOND_TYPE, event.params.id));
     marketCreated.marketId = event.params.id;
     marketCreated.date = getISO8601StringFromTimestamp(event.block.timestamp);
     marketCreated.timestamp = getUnixTimestamp(event.block.timestamp);
@@ -63,14 +66,14 @@ export function handleMarketCreated(event: MarketCreated): void {
 }
 
 export function handleMarketClosed(event: MarketClosed): void {
-    const market = Market.load(`${event.params.id}`);
+    const market = Market.load(getId(event.address, BOND_TYPE, event.params.id));
     // If there is no existing market, then it is going to be for a non-OHM token
     if (!market) {
         log.info("Ignoring market closure where there is no existing market record (likely token other than OHM)", []);
         return;
     }
 
-    const marketClosed = new MarketClosedEvent(`${event.params.id}`);
+    const marketClosed = new MarketClosedEvent(getId(event.address, BOND_TYPE, event.params.id));
     marketClosed.marketId = event.params.id;
     marketClosed.date = getISO8601StringFromTimestamp(event.block.timestamp);
     marketClosed.timestamp = getUnixTimestamp(event.block.timestamp);
@@ -82,5 +85,6 @@ export function handleMarketClosed(event: MarketClosed): void {
     market.closedBlock = marketClosed.block;
     market.closedDate = marketClosed.date;
     market.closedTimestamp = marketClosed.timestamp;
+
     market.save();
 }
