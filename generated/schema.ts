@@ -104,6 +104,32 @@ export class Market extends Entity {
     this.set("vesting", Value.fromBigInt(value));
   }
 
+  get durationMilliseconds(): BigInt {
+    const value = this.get("durationMilliseconds");
+    return value!.toBigInt();
+  }
+
+  set durationMilliseconds(value: BigInt) {
+    this.set("durationMilliseconds", Value.fromBigInt(value));
+  }
+
+  get durationActualMilliseconds(): BigInt | null {
+    const value = this.get("durationActualMilliseconds");
+    if (!value || value.kind == ValueKind.NULL) {
+      return null;
+    } else {
+      return value.toBigInt();
+    }
+  }
+
+  set durationActualMilliseconds(value: BigInt | null) {
+    if (!value) {
+      this.unset("durationActualMilliseconds");
+    } else {
+      this.set("durationActualMilliseconds", Value.fromBigInt(<BigInt>value));
+    }
+  }
+
   get capacityInPayoutToken(): BigDecimal {
     const value = this.get("capacityInPayoutToken");
     return value!.toBigDecimal();

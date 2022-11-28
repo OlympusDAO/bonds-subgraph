@@ -11,6 +11,7 @@ const BOND_TYPE = "FixedExpiry";
 function createMarket(marketId: BigInt, initialPrice: BigInt, vesting: BigInt, block: ethereum.Block, contractAddress: Address): Market {
   const bondContract = BondFixedExpirySDA.bind(contractAddress);
   const marketResult = bondContract.markets(marketId);
+  const metadataResult = bondContract.metadata(marketId);
 
   const payoutToken = ERC20.bind(marketResult.getPayoutToken());
   const quoteToken = ERC20.bind(marketResult.getQuoteToken());
@@ -23,6 +24,7 @@ function createMarket(marketId: BigInt, initialPrice: BigInt, vesting: BigInt, b
   market.payoutToken = marketResult.getPayoutToken();
   market.quoteToken = marketResult.getQuoteToken();
   market.vesting = vesting;
+  market.durationMilliseconds = metadataResult.getLength().times(BigInt.fromString("1000")); // Seconds to milliseconds
 
   /**
    * NOTE: marketResult has a getCapacityInQuote() function. Implementing this would complicate matters,
@@ -88,6 +90,7 @@ export function handleMarketClosed(event: MarketClosed): void {
   market.closedBlock = marketClosed.block;
   market.closedDate = marketClosed.date;
   market.closedTimestamp = marketClosed.timestamp;
+  market.durationActualMilliseconds = marketClosed.timestamp.minus(market.createdTimestamp);
 
   market.save();
 }
