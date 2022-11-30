@@ -1,12 +1,31 @@
-import { Address, BigInt, ethereum, log } from "@graphprotocol/graph-ts";
+import { Address, BigDecimal, BigInt, ethereum, log } from "@graphprotocol/graph-ts";
 import { BondFixedExpirySDA, MarketClosed, MarketCreated } from "../generated/BondFixedExpirySDAv1/BondFixedExpirySDA";
 import { ERC20 } from "../generated/BondFixedExpirySDAv1/ERC20";
 import { Market, MarketClosedEvent, MarketCreatedEvent } from "../generated/schema";
 import { OHM_V2 } from "./constants";
 import { getISO8601StringFromTimestamp, getUnixTimestamp } from "./helpers/DateHelper";
 import { getId, payoutTokenToDecimal, priceToDecimal } from "./helpers/MarketHelper";
+import { toDecimal } from "./helpers/NumberHelper";
 
 const BOND_TYPE = "FixedExpiry";
+
+function closeMarket(marketId: BigInt, market: Market, marketClosed: MarketClosedEvent, contractAddress: Address): void {
+  const bondContract = BondFixedExpirySDA.bind(contractAddress);
+  const marketResult = bondContract.markets(marketId);
+
+  const payoutToken = ERC20.bind(marketResult.getPayoutToken());
+  const quoteToken = ERC20.bind(marketResult.getQuoteToken());
+
+  market.closedBlock = marketClosed.block;
+  market.closedDate = marketClosed.date;
+  market.closedTimestamp = marketClosed.timestamp;
+  market.durationActualMilliseconds = marketClosed.timestamp.minus(market.createdTimestamp);
+
+  market.soldInPayoutToken = toDecimal(marketResult.getSold(), payoutToken.decimals());
+  market.purchasedInQuoteToken = toDecimal(marketResult.getPurchased(), quoteToken.decimals());
+
+  market.save();
+}
 
 function createMarket(marketId: BigInt, initialPrice: BigInt, vesting: BigInt, block: ethereum.Block, contractAddress: Address): Market {
   const bondContract = BondFixedExpirySDA.bind(contractAddress);
@@ -37,6 +56,9 @@ function createMarket(marketId: BigInt, initialPrice: BigInt, vesting: BigInt, b
 
   market.initialPriceInQuoteToken = priceToDecimal(initialPrice, marketResult.getScale(), u8(payoutToken.decimals()), u8(quoteToken.decimals()));
   market.minPriceInQuoteToken = priceToDecimal(marketResult.getMinPrice(), marketResult.getScale(), u8(payoutToken.decimals()), u8(quoteToken.decimals()));
+
+  market.soldInPayoutToken = BigDecimal.zero();
+  market.purchasedInQuoteToken = BigDecimal.zero();
 
   market.createdDate = getISO8601StringFromTimestamp(block.timestamp);
   market.createdTimestamp = getUnixTimestamp(block.timestamp);
@@ -87,10 +109,5 @@ export function handleMarketClosed(event: MarketClosed): void {
   marketClosed.save();
 
   // Update the market too
-  market.closedBlock = marketClosed.block;
-  market.closedDate = marketClosed.date;
-  market.closedTimestamp = marketClosed.timestamp;
-  market.durationActualMilliseconds = marketClosed.timestamp.minus(market.createdTimestamp);
-
-  market.save();
+  closeMarket(event.params.id, market, marketClosed, event.address);
 }

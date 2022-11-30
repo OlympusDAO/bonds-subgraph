@@ -175,6 +175,24 @@ export class Market extends Entity {
     this.set("minPriceInQuoteToken", Value.fromBigDecimal(value));
   }
 
+  get soldInPayoutToken(): BigDecimal {
+    const value = this.get("soldInPayoutToken");
+    return value!.toBigDecimal();
+  }
+
+  set soldInPayoutToken(value: BigDecimal) {
+    this.set("soldInPayoutToken", Value.fromBigDecimal(value));
+  }
+
+  get purchasedInQuoteToken(): BigDecimal {
+    const value = this.get("purchasedInQuoteToken");
+    return value!.toBigDecimal();
+  }
+
+  set purchasedInQuoteToken(value: BigDecimal) {
+    this.set("purchasedInQuoteToken", Value.fromBigDecimal(value));
+  }
+
   get createdBlock(): BigInt {
     const value = this.get("createdBlock");
     return value!.toBigInt();
