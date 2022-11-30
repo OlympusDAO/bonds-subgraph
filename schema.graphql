@@ -23,6 +23,9 @@ type Market @entity {
   initialPriceInQuoteToken: BigDecimal!
   minPriceInQuoteToken: BigDecimal!
 
+  soldInPayoutToken: BigDecimal!
+  purchasedInQuoteToken: BigDecimal!
+
   createdBlock: BigInt!
   createdDate: String!
   createdTimestamp: BigInt!
