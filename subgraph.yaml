@@ -178,3 +178,51 @@ dataSources:
         - event: MarketClosed(indexed uint256)
           handler: handleMarketClosed
       file: ./src/handleFixedTermBond.ts
+  - kind: ethereum
+    name: BondFixedExpiryTeller_1156
+    network: mainnet
+    source:
+      address: "0x007FE7c498A2Cf30971ad8f2cbC36bd14Ac51156"
+      abi: BondFixedExpiryTeller
+      startBlock: 15546728
+    mapping:
+      kind: ethereum/events
+      apiVersion: 0.0.6
+      language: wasm/assemblyscript
+      entities:
+        - Bonded
+      abis:
+        - name: BondFixedExpiryTeller
+          file: ./abis/BondFixedExpiryTeller.json
+        - name: BondFixedExpirySDA
+          file: ./abis/BondFixedExpirySDA.json
+        - name: ERC20
+          file: ./abis/ERC20.json
+      eventHandlers:
+        - event: Bonded(indexed uint256,indexed address,uint256,uint256)
+          handler: handleBonded
+      file: ./src/handleFixedExpiryTeller.ts
+  - kind: ethereum
+    name: BondFixedExpiryTeller_DC95
+    network: mainnet
+    source:
+      address: "0x007fe70dc9797c4198528ae43d8195fff82bdc95"
+      abi: BondFixedExpiryTeller
+      startBlock: 15998037
+    mapping:
+      kind: ethereum/events
+      apiVersion: 0.0.6
+      language: wasm/assemblyscript
+      entities:
+        - Bonded
+      abis:
+        - name: BondFixedExpiryTeller
+          file: ./abis/BondFixedExpiryTeller.json
+        - name: BondFixedExpirySDA
+          file: ./abis/BondFixedExpirySDA.json
+        - name: ERC20
+          file: ./abis/ERC20.json
+      eventHandlers:
+        - event: Bonded(indexed uint256,indexed address,uint256,uint256)
+          handler: handleBonded
+      file: ./src/handleFixedExpiryTeller.ts

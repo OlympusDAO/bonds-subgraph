@@ -56,3 +56,19 @@ type MarketClosedEvent @entity(immutable: true) {
   block: BigInt!
   market: Market!
 }
+
+type BondPurchase @entity(immutable: true) {
+  id: ID!
+  date: String!
+  block: BigInt!
+  timestamp: BigInt!
+  contract: Bytes!
+  marketId: BigInt!
+  referrer: Bytes!
+  amountInQuoteToken: BigDecimal!
+  payoutInPayoutToken: BigDecimal!
+  payoutToken: Bytes!
+  quoteToken: Bytes!
+  expiryTimestamp: BigInt!
+  expiryDate: String!
+}

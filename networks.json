@@ -1,0 +1,7 @@
+{
+  "mainnet": {
+    "BondFixedExpiryTeller": {
+      "address": "0x007FE7c498A2Cf30971ad8f2cbC36bd14Ac51156"
+    }
+  }
+}
