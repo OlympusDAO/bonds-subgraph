@@ -524,6 +524,15 @@ export class BondPurchase extends Entity {
     this.set("timestamp", Value.fromBigInt(value));
   }
 
+  get transaction(): Bytes {
+    const value = this.get("transaction");
+    return value!.toBytes();
+  }
+
+  set transaction(value: Bytes) {
+    this.set("transaction", Value.fromBytes(value));
+  }
+
   get contract(): Bytes {
     const value = this.get("contract");
     return value!.toBytes();

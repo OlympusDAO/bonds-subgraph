@@ -1,4 +1,5 @@
-import { Address, log } from "@graphprotocol/graph-ts";
+import { Address, BigInt, log } from "@graphprotocol/graph-ts";
+import { BondAggregator } from "../generated/BondFixedExpirySDAv3/BondAggregator";
 import { BondFixedExpirySDA } from "../generated/BondFixedExpirySDAv3/BondFixedExpirySDA";
 import { Bonded } from "../generated/BondFixedExpiryTeller_1156/BondFixedExpiryTeller";
 import { ERC20 } from "../generated/BondFixedExpiryTeller_1156/ERC20";
@@ -8,34 +9,23 @@ import {
 import { getISO8601StringFromTimestamp, getUnixTimestamp } from "./helpers/DateHelper";
 import { toDecimal } from "./helpers/NumberHelper";
 
-const AUCTIONEER_1156 = "0x007fea7a23da99f3ce7ea34f976f32bf79a09c43";
-const AUCTIONEER_DC95 = "0x007FEA32545a39Ff558a1367BBbC1A22bc7ABEfD";
-const TELLER_MAP = new Map<string, string>();
-TELLER_MAP.set("0x007FE7c498A2Cf30971ad8f2cbC36bd14Ac51156".toLowerCase(), AUCTIONEER_1156);
-TELLER_MAP.set("0x007fe70dc9797c4198528ae43d8195fff82bdc95".toLowerCase(), AUCTIONEER_DC95);
+const BOND_AGGREGATOR = "0x007A66B9e719b3aBb2f3917Eb47D4231a17F5a0D";
 
-function getAuctioneer(contract: string): Address {
-  const contractLower = contract.toLowerCase();
+function getAuctioneer(tellerContract: string, marketId: BigInt): Address {
+  // Get the auctioneer from the bond aggregator
+  const aggregator = BondAggregator.bind(Address.fromString(BOND_AGGREGATOR));
 
-  if (!TELLER_MAP.has(contractLower)) {
-    throw new Error(`Cannot find auctioneer contract for teller: ${contract}`);
-  }
-
-  const auctioneer = TELLER_MAP.get(contractLower);
-  log.debug("Found auctioneer {} for teller {}", [auctioneer, contract]);
-  return Address.fromString(auctioneer);
+  const auctioneerAddress = aggregator.getAuctioneer(marketId);
+  log.debug("Found auctioneer {} for teller {} and market id {}", [auctioneerAddress.toHexString(), tellerContract, marketId.toString()]);
+  return auctioneerAddress;
 }
 
 export function handleBonded(event: Bonded): void {
   log.info("Creating BondPurchase for teller contract {} and purchase id {}", [event.address.toHexString(), event.params.id.toString()]);
 
-  const bondAuctioneer = BondFixedExpirySDA.bind(getAuctioneer(event.address.toHexString()));
   const marketId = event.params.id;
+  const bondAuctioneer = BondFixedExpirySDA.bind(getAuctioneer(event.address.toHexString(), marketId));
   const marketInfo = bondAuctioneer.getMarketInfoForPurchase(marketId);
-  if (marketInfo.getOwner() == Address.zero()) {
-    log.warning("Ignoring Bonded event with no market info", []);
-    return;
-  }
 
   const quoteTokenAddress = marketInfo.getQuoteToken();
   log.debug("quoteToken {}", [quoteTokenAddress.toHexString()]);
@@ -49,6 +39,7 @@ export function handleBonded(event: Bonded): void {
     event.transaction.hash.toHex() + "-" + event.logIndex.toString()
   );
 
+  entity.transaction = event.transaction.hash;
   entity.date = getISO8601StringFromTimestamp(event.block.timestamp);
   entity.block = event.block.number;
   entity.timestamp = getUnixTimestamp(event.block.timestamp);

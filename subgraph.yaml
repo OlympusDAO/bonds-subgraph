@@ -196,6 +196,8 @@ dataSources:
           file: ./abis/BondFixedExpiryTeller.json
         - name: BondFixedExpirySDA
           file: ./abis/BondFixedExpirySDA.json
+        - name: BondAggregator
+          file: ./abis/BondAggregator.json
         - name: ERC20
           file: ./abis/ERC20.json
       eventHandlers:
@@ -220,6 +222,8 @@ dataSources:
           file: ./abis/BondFixedExpiryTeller.json
         - name: BondFixedExpirySDA
           file: ./abis/BondFixedExpirySDA.json
+        - name: BondAggregator
+          file: ./abis/BondAggregator.json
         - name: ERC20
           file: ./abis/ERC20.json
       eventHandlers:
