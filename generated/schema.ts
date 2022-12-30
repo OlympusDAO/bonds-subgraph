@@ -465,3 +465,152 @@ export class MarketClosedEvent extends Entity {
     this.set("market", Value.fromString(value));
   }
 }
+
+export class BondPurchase extends Entity {
+  constructor(id: string) {
+    super();
+    this.set("id", Value.fromString(id));
+  }
+
+  save(): void {
+    const id = this.get("id");
+    assert(id != null, "Cannot save BondPurchase entity without an ID");
+    if (id) {
+      assert(
+        id.kind == ValueKind.STRING,
+        `Entities of type BondPurchase must have an ID of type String but the id '${id.displayData()}' is of type ${id.displayKind()}`
+      );
+      store.set("BondPurchase", id.toString(), this);
+    }
+  }
+
+  static load(id: string): BondPurchase | null {
+    return changetype<BondPurchase | null>(store.get("BondPurchase", id));
+  }
+
+  get id(): string {
+    const value = this.get("id");
+    return value!.toString();
+  }
+
+  set id(value: string) {
+    this.set("id", Value.fromString(value));
+  }
+
+  get date(): string {
+    const value = this.get("date");
+    return value!.toString();
+  }
+
+  set date(value: string) {
+    this.set("date", Value.fromString(value));
+  }
+
+  get block(): BigInt {
+    const value = this.get("block");
+    return value!.toBigInt();
+  }
+
+  set block(value: BigInt) {
+    this.set("block", Value.fromBigInt(value));
+  }
+
+  get timestamp(): BigInt {
+    const value = this.get("timestamp");
+    return value!.toBigInt();
+  }
+
+  set timestamp(value: BigInt) {
+    this.set("timestamp", Value.fromBigInt(value));
+  }
+
+  get transaction(): Bytes {
+    const value = this.get("transaction");
+    return value!.toBytes();
+  }
+
+  set transaction(value: Bytes) {
+    this.set("transaction", Value.fromBytes(value));
+  }
+
+  get contract(): Bytes {
+    const value = this.get("contract");
+    return value!.toBytes();
+  }
+
+  set contract(value: Bytes) {
+    this.set("contract", Value.fromBytes(value));
+  }
+
+  get marketId(): BigInt {
+    const value = this.get("marketId");
+    return value!.toBigInt();
+  }
+
+  set marketId(value: BigInt) {
+    this.set("marketId", Value.fromBigInt(value));
+  }
+
+  get referrer(): Bytes {
+    const value = this.get("referrer");
+    return value!.toBytes();
+  }
+
+  set referrer(value: Bytes) {
+    this.set("referrer", Value.fromBytes(value));
+  }
+
+  get amountInQuoteToken(): BigDecimal {
+    const value = this.get("amountInQuoteToken");
+    return value!.toBigDecimal();
+  }
+
+  set amountInQuoteToken(value: BigDecimal) {
+    this.set("amountInQuoteToken", Value.fromBigDecimal(value));
+  }
+
+  get payoutInPayoutToken(): BigDecimal {
+    const value = this.get("payoutInPayoutToken");
+    return value!.toBigDecimal();
+  }
+
+  set payoutInPayoutToken(value: BigDecimal) {
+    this.set("payoutInPayoutToken", Value.fromBigDecimal(value));
+  }
+
+  get payoutToken(): Bytes {
+    const value = this.get("payoutToken");
+    return value!.toBytes();
+  }
+
+  set payoutToken(value: Bytes) {
+    this.set("payoutToken", Value.fromBytes(value));
+  }
+
+  get quoteToken(): Bytes {
+    const value = this.get("quoteToken");
+    return value!.toBytes();
+  }
+
+  set quoteToken(value: Bytes) {
+    this.set("quoteToken", Value.fromBytes(value));
+  }
+
+  get expiryTimestamp(): BigInt {
+    const value = this.get("expiryTimestamp");
+    return value!.toBigInt();
+  }
+
+  set expiryTimestamp(value: BigInt) {
+    this.set("expiryTimestamp", Value.fromBigInt(value));
+  }
+
+  get expiryDate(): string {
+    const value = this.get("expiryDate");
+    return value!.toString();
+  }
+
+  set expiryDate(value: string) {
+    this.set("expiryDate", Value.fromString(value));
+  }
+}
