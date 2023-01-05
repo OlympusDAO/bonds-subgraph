@@ -542,6 +542,15 @@ export class BondPurchase extends Entity {
     this.set("contract", Value.fromBytes(value));
   }
 
+  get type(): string {
+    const value = this.get("type");
+    return value!.toString();
+  }
+
+  set type(value: string) {
+    this.set("type", Value.fromString(value));
+  }
+
   get marketId(): BigInt {
     const value = this.get("marketId");
     return value!.toBigInt();

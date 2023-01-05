@@ -2,7 +2,7 @@ import { Address, BigDecimal, BigInt, ethereum, log } from "@graphprotocol/graph
 import { BondFixedTermSDA, MarketClosed, MarketCreated } from "../generated/BondFixedTermSDAv3/BondFixedTermSDA";
 import { ERC20 } from "../generated/BondFixedTermSDAv3/ERC20";
 import { Market, MarketClosedEvent, MarketCreatedEvent } from "../generated/schema";
-import { OHM_V2 } from "./constants";
+import { isOHMMarket } from "./helpers/ContractHelper";
 import { getISO8601StringFromTimestamp, getUnixTimestamp } from "./helpers/DateHelper";
 import { getId, payoutTokenToDecimal, priceToDecimal } from "./helpers/MarketHelper";
 import { toDecimal } from "./helpers/NumberHelper";
@@ -69,9 +69,7 @@ function createMarket(marketId: BigInt, initialPrice: BigInt, vesting: BigInt, b
 }
 
 export function handleMarketCreated(event: MarketCreated): void {
-  // Ignore if not OHM
-  const ohmAddress = Address.fromString(OHM_V2);
-  if (!event.params.payoutToken.equals(ohmAddress) && !event.params.quoteToken.equals(ohmAddress)) {
+  if (isOHMMarket(event.params.payoutToken.toHexString(), event.params.quoteToken.toHexString())) {
     log.info("Ignoring market creation for token other than OHM", []);
     return;
   }
