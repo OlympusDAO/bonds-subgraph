@@ -1,18 +1,17 @@
 import { Address, BigInt, log } from "@graphprotocol/graph-ts";
-import { BondAggregator } from "../generated/BondFixedExpirySDAv3/BondAggregator";
-import { BondFixedExpirySDA } from "../generated/BondFixedExpirySDAv3/BondFixedExpirySDA";
-import { Bonded } from "../generated/BondFixedExpiryTeller_1156/BondFixedExpiryTeller";
-import { ERC20 } from "../generated/BondFixedExpiryTeller_1156/ERC20";
+import { BondAggregator } from "../generated/BondFixedTermSDAv3/BondAggregator";
+import { BondFixedTermSDA } from "../generated/BondFixedTermSDAv3/BondFixedTermSDA";
+import { Bonded } from "../generated/BondFixedTermTeller_DAE0/BondFixedTermTeller";
+import { ERC20 } from "../generated/BondFixedTermTeller_DAE0/ERC20";
 import {
   BondPurchase
 } from "../generated/schema"
 import { getISO8601StringFromTimestamp, getUnixTimestamp } from "./helpers/DateHelper";
 import { toDecimal } from "./helpers/NumberHelper";
 
-const BOND_TELLER_V1 = "0x007FE7c498A2Cf30971ad8f2cbC36bd14Ac51156".toLowerCase();
+const BOND_TELLER_V1 = "0x007F77B53ed0F058616335bc040cD326E125daE0".toLowerCase();
 const BOND_AGGREGATOR_V1 = "0x007A66B9e719b3aBb2f3917Eb47D4231a17F5a0D".toLowerCase();
-
-const BOND_TELLER_V2 = "0x007FE70dc9797C4198528aE43d8195ffF82Bdc95".toLowerCase();
+const BOND_TELLER_V2 = "0x007F7735baF391e207E3aA380bb53c4Bd9a5Fed6".toLowerCase();
 const BOND_AGGREGATOR_V2 = "0x007A66A2a13415DB3613C1a4dd1C942A285902d1".toLowerCase();
 
 function getAggregator(tellerContract: string): BondAggregator {
@@ -24,10 +23,10 @@ function getAggregator(tellerContract: string): BondAggregator {
     return BondAggregator.bind(Address.fromString(BOND_AGGREGATOR_V2));
   }
 
-  throw new Error(`Unknown fixed expiry teller contract: ${tellerContract}`);
+  throw new Error(`Unknown fixed term teller contract: ${tellerContract}`);
 }
 
-const BOND_TYPE = "FixedExpiry";
+const BOND_TYPE = "FixedTerm";
 
 function getAuctioneer(tellerContract: string, marketId: BigInt): Address {
   // Get the auctioneer from the bond aggregator
@@ -42,7 +41,7 @@ export function handleBonded(event: Bonded): void {
   log.info("Creating BondPurchase for teller contract {} and market id {}", [event.address.toHexString(), event.params.id.toString()]);
 
   const marketId = event.params.id;
-  const bondAuctioneer = BondFixedExpirySDA.bind(getAuctioneer(event.address.toHexString(), marketId));
+  const bondAuctioneer = BondFixedTermSDA.bind(getAuctioneer(event.address.toHexString(), marketId));
   const marketInfo = bondAuctioneer.getMarketInfoForPurchase(marketId);
 
   const quoteTokenAddress = marketInfo.getQuoteToken();

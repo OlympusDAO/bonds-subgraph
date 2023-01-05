@@ -178,6 +178,61 @@ dataSources:
         - event: MarketClosed(indexed uint256)
           handler: handleMarketClosed
       file: ./src/handleFixedTermBond.ts
+  ## Bond Purchases
+  # Fixed Term
+  - kind: ethereum
+    name: BondFixedTermTeller_DAE0
+    network: mainnet
+    source:
+      address: "0x007F77B53ed0F058616335bc040cD326E125daE0"
+      abi: BondFixedTermTeller
+      startBlock: 15546730
+    mapping:
+      kind: ethereum/events
+      apiVersion: 0.0.6
+      language: wasm/assemblyscript
+      entities:
+        - Bonded
+      abis:
+        - name: BondFixedTermTeller
+          file: ./abis/BondFixedTermTeller.json
+        - name: BondFixedTermSDA
+          file: ./abis/BondFixedTermSDA.json
+        - name: BondAggregator
+          file: ./abis/BondAggregator.json
+        - name: ERC20
+          file: ./abis/ERC20.json
+      eventHandlers:
+        - event: Bonded(indexed uint256,indexed address,uint256,uint256)
+          handler: handleBonded
+      file: ./src/handleFixedTermTeller.ts
+  - kind: ethereum
+    name: BondFixedTermTeller_FED6
+    network: mainnet
+    source:
+      address: "0x007F7735baF391e207E3aA380bb53c4Bd9a5Fed6"
+      abi: BondFixedTermTeller
+      startBlock: 15998038
+    mapping:
+      kind: ethereum/events
+      apiVersion: 0.0.6
+      language: wasm/assemblyscript
+      entities:
+        - Bonded
+      abis:
+        - name: BondFixedTermTeller
+          file: ./abis/BondFixedTermTeller.json
+        - name: BondFixedTermSDA
+          file: ./abis/BondFixedTermSDA.json
+        - name: BondAggregator
+          file: ./abis/BondAggregator.json
+        - name: ERC20
+          file: ./abis/ERC20.json
+      eventHandlers:
+        - event: Bonded(indexed uint256,indexed address,uint256,uint256)
+          handler: handleBonded
+      file: ./src/handleFixedTermTeller.ts
+  # Fixed Expiry
   - kind: ethereum
     name: BondFixedExpiryTeller_1156
     network: mainnet

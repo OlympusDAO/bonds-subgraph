@@ -64,6 +64,7 @@ type BondPurchase @entity(immutable: true) {
   timestamp: BigInt!
   transaction: Bytes!
   contract: Bytes!
+  type: BondType!
   marketId: BigInt!
   referrer: Bytes!
   amountInQuoteToken: BigDecimal!
