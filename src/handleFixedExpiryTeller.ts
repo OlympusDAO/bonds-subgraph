@@ -6,6 +6,7 @@ import { ERC20 } from "../generated/BondFixedExpiryTeller_1156/ERC20";
 import {
   BondPurchase
 } from "../generated/schema"
+import { isOHMMarket } from "./helpers/ContractHelper";
 import { getISO8601StringFromTimestamp, getUnixTimestamp } from "./helpers/DateHelper";
 import { toDecimal } from "./helpers/NumberHelper";
 
@@ -46,10 +47,14 @@ export function handleBonded(event: Bonded): void {
   const marketInfo = bondAuctioneer.getMarketInfoForPurchase(marketId);
 
   const quoteTokenAddress = marketInfo.getQuoteToken();
-  log.debug("quoteToken {}", [quoteTokenAddress.toHexString()]);
-  const quoteToken = ERC20.bind(quoteTokenAddress);
   const payoutTokenAddress = marketInfo.getPayoutToken();
-  log.debug("payoutToken {}", [payoutTokenAddress.toHexString()]);
+
+  if (isOHMMarket(payoutTokenAddress.toHexString(), quoteTokenAddress.toHexString())) {
+    log.info("Ignoring market creation for token other than OHM", []);
+    return;
+  }
+
+  const quoteToken = ERC20.bind(quoteTokenAddress);
   const payoutToken = ERC20.bind(payoutTokenAddress);
   const vestingTimestamp = marketInfo.getVesting();
 
@@ -69,8 +74,7 @@ export function handleBonded(event: Bonded): void {
   entity.payoutInPayoutToken = toDecimal(event.params.payout, payoutToken.decimals());
   entity.payoutToken = payoutTokenAddress;
   entity.quoteToken = quoteTokenAddress;
-
   entity.expiryTimestamp = getUnixTimestamp(vestingTimestamp);
-  entity.expiryDate = getISO8601StringFromTimestamp(vestingTimestamp);
+  entity.expiryDate = getISO8601StringFromTimestamp(event.block.timestamp.plus(vestingTimestamp));
   entity.save();
 }
