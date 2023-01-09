@@ -69,7 +69,7 @@ function createMarket(marketId: BigInt, initialPrice: BigInt, vesting: BigInt, b
 }
 
 export function handleMarketCreated(event: MarketCreated): void {
-  if (isOHMMarket(event.params.payoutToken.toHexString(), event.params.quoteToken.toHexString())) {
+  if (!isOHMMarket(event.params.payoutToken.toHexString(), event.params.quoteToken.toHexString())) {
     log.info("Ignoring market creation for token other than OHM", []);
     return;
   }
