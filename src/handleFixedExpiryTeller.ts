@@ -49,7 +49,7 @@ export function handleBonded(event: Bonded): void {
   const quoteTokenAddress = marketInfo.getQuoteToken();
   const payoutTokenAddress = marketInfo.getPayoutToken();
 
-  if (isOHMMarket(payoutTokenAddress.toHexString(), quoteTokenAddress.toHexString())) {
+  if (!isOHMMarket(payoutTokenAddress.toHexString(), quoteTokenAddress.toHexString())) {
     log.info("Ignoring market creation for token other than OHM", []);
     return;
   }
