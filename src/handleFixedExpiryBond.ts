@@ -2,7 +2,6 @@ import { Address, BigDecimal, BigInt, ethereum, log } from "@graphprotocol/graph
 import { BondFixedExpirySDA, MarketClosed, MarketCreated } from "../generated/BondFixedExpirySDAv1/BondFixedExpirySDA";
 import { ERC20 } from "../generated/BondFixedExpirySDAv1/ERC20";
 import { Market, MarketClosedEvent, MarketCreatedEvent } from "../generated/schema";
-import { OHM_V2 } from "./constants";
 import { isOHMMarket } from "./helpers/ContractHelper";
 import { getISO8601StringFromTimestamp, getUnixTimestamp } from "./helpers/DateHelper";
 import { getId, payoutTokenToDecimal, priceToDecimal } from "./helpers/MarketHelper";
@@ -87,6 +86,7 @@ export function handleMarketCreated(event: MarketCreated): void {
   marketCreated.market = market.id;
 
   marketCreated.save();
+  log.debug("Created market with id {}", [market.id]);
 }
 
 export function handleMarketClosed(event: MarketClosed): void {
