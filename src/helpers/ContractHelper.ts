@@ -1,3 +1,4 @@
+import { Address } from "@graphprotocol/graph-ts";
 import { OHM_V2 } from "../constants";
 
 export function isOHMMarket(payoutToken: string, quoteToken: string): boolean {

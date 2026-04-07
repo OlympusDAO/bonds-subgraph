@@ -1,7 +1,6 @@
 import { BigInt } from "@graphprotocol/graph-ts";
 import { assert, describe, test } from "matchstick-as";
-
-import { payoutTokenToDecimal,priceToDecimal } from "../src/helpers/MarketHelper";
+import { priceToDecimal, payoutTokenToDecimal } from "../src/helpers/MarketHelper";
 
 /**
  * These tests use outputs from a reserve bond on Goerli with the following output:

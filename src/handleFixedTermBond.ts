@@ -1,5 +1,4 @@
 import { Address, BigDecimal, BigInt, ethereum, log } from "@graphprotocol/graph-ts";
-
 import { BondFixedTermSDA, MarketClosed, MarketCreated } from "../generated/BondFixedTermSDAv3/BondFixedTermSDA";
 import { ERC20 } from "../generated/BondFixedTermSDAv3/ERC20";
 import { Market, MarketClosedEvent, MarketCreatedEvent } from "../generated/schema";

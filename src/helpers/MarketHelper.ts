@@ -1,5 +1,4 @@
 import { Address, BigDecimal, BigInt } from "@graphprotocol/graph-ts";
-
 import { toDecimal } from "./NumberHelper";
 
 export function getId(
@@ -8,7 +7,7 @@ export function getId(
     marketId: BigInt,
 ): string {
     return `${contract.toHexString()}/${bondType}/${marketId.toString()}`;
-}
+};
 
 /**
  * Converts a price integer (in terms of the quote token per payout token) to a BigDecimal.
