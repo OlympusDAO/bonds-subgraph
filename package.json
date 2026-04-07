@@ -6,7 +6,7 @@
   "author": "Jem <0x0xjem@gmail.com>",
   "license": "MIT",
   "scripts": {
-    "codegen": "graph codegen && yarn eslint --config ./.eslintrc.json --fix generated/",
+    "codegen": "graph codegen && pnpm eslint --config ./.eslintrc.json --fix generated/",
     "build": "graph build",
     "deploy": "source .subgraph-version && graph deploy --node https://api.thegraph.com/deploy/ --ipfs https://api.thegraph.com/ipfs/ olympusdao/bonds",
     "deploy:dev": "source .subgraph-version && source .env && graph deploy --studio bonds --deploy-key $GRAPH_STUDIO_TOKEN --version-label $SUBGRAPH_VERSION",
@@ -14,10 +14,12 @@
     "test": "graph test --version 0.5.3",
     "test:force": "yarn test --recompile",
     "auth": "source .env && graph auth --product hosted-service $GRAPH_TOKEN",
+    "lint": "eslint . --fix",
+    "lint:check": "eslint . --max-warnings 0",
     "preinstall": "npx only-allow@1.2.2 pnpm"
   },
   "dependencies": {
-    "@graphprotocol/graph-cli": "^0.96.0",
+    "@graphprotocol/graph-cli": "0.98.1",
     "@graphprotocol/graph-ts": "^0.28.0",
     "assemblyscript-json": "^1.1.0"
   },
@@ -39,7 +41,7 @@
   },
   "pnpm": {
     "overrides": {
-      "ajv": ">=6.14.0",
+      "ajv": "6.14.0",
       "axios": ">=0.30.3",
       "brace-expansion": ">=1.1.13",
       "braces": ">=3.0.3",
@@ -59,7 +61,7 @@
       "undici": ">=7.24.0",
       "word-wrap": ">=1.2.4",
       "yaml": ">=2.8.3",
-      "ajv@<6.14.0": ">=6.14.0",
+      "ajv@<6.14.0": "6.14.0",
       "axios@<0.30.0": ">=0.30.0",
       "axios@<=0.30.2": ">=0.30.3",
       "axios@>=0.8.1 <0.28.0": ">=0.28.0",
