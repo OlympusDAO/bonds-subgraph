@@ -3,7 +3,7 @@ enum BondType {
   FixedExpiry
 }
 
-type Market @entity(immutable: false) {
+type Market @entity {
   id: ID! # <contract address>/type/<market id>
   marketId: BigInt!
 
